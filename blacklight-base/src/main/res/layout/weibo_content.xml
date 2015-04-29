@@ -184,7 +184,6 @@
 
     </RelativeLayout>
     <LinearLayout
-        android:layout_marginTop="6dp"
         android:gravity="right"
         android:layout_marginRight="12dp"
         android:layout_width="match_parent"

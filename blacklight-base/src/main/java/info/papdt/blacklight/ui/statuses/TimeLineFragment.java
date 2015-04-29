@@ -33,6 +33,7 @@ public abstract class TimeLineFragment extends AbsTimeLineFragment<WeiboAdapter>
 
 	protected boolean mBindOrig = true;
 	protected boolean mShowCommentStatus = true;
+	protected boolean mNotifyDataLoaded = false;
 	
 	@Override
 	protected WeiboAdapter buildAdapter() {
@@ -43,11 +44,15 @@ public abstract class TimeLineFragment extends AbsTimeLineFragment<WeiboAdapter>
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View v = super.onCreateView(inflater, container, savedInstanceState);
+		mNotifyDataLoaded = true;
 		v.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override
 			public void onGlobalLayout() {
-				mAdapter.notifyDataSetLoaded();
-				v.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				if (mNotifyDataLoaded) {
+					mAdapter.notifyDataSetLoaded();
+				}
+				
+				mNotifyDataLoaded = false;
 			}
 		});
 		return v;
@@ -81,6 +86,11 @@ public abstract class TimeLineFragment extends AbsTimeLineFragment<WeiboAdapter>
 	@Override
 	protected void initTitle() {
 		// Do nothing by default
+	}
+
+	@Override
+	protected void onDataLoaded() {
+		mNotifyDataLoaded = true;
 	}
 	
 	protected void load(boolean param) {

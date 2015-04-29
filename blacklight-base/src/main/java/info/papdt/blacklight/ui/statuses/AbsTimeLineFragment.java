@@ -114,6 +114,7 @@ SwipeRefreshLayout.OnRefreshListener, MainActivity.Refresher, MainActivity.Heade
 	protected abstract void cacheLoadNew(boolean param);
 	protected abstract int getCurrentItemCount();
 	protected abstract void initTitle();
+	protected void onDataLoaded() {}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -488,6 +489,8 @@ SwipeRefreshLayout.OnRefreshListener, MainActivity.Refresher, MainActivity.Heade
 			if (mSwipeRefresh != null) {
 				mSwipeRefresh.setRefreshing(false);
 			}
+			
+			onDataLoaded();
 		}
 
 	}
