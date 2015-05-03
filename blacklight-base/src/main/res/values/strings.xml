@@ -22,6 +22,7 @@
 	<string name="app_name">BlackLight</string>
 	
 	<!-- App Key -->
+	<string name="key_gist" translatable="false">https://gist.github.com/PeterCxy/3085799055f63c63c911</string>
 	<string name="custom">Custom</string>
 	<string name="custom_des">App ID / Secret are used to authorize into Weibo to get an access token to access data. If no permission is granted to the token, the app will fail to function correctly.</string>
 	<string name="app_id" translatable="false">App ID</string>
@@ -30,6 +31,7 @@
 	<string name="scope" translatable="false">Scope</string>
 	<string name="app_pkg" translatable="false">Package name (Optional, maybe useless)</string>
 	<string name="app_copy">Copy</string>
+	<string name="app_hint">Whaaat?</string>
 	
 	<!-- Login -->
 	<string name="login">Login</string>
@@ -284,5 +286,13 @@
 	<string name="clear_cache_hint">See \'Settings -\> Apps -\> BlackLight\'</string>
 	<string name="post_photo">Share Photo</string>
 	<string name="wait_switch">Just a minute, BlackLight is reloading ^_^</string>
+		
+	<string-array name="click_refusal">
+		<item>Hey, nice to see you.</item>
+		<item>No, there is NOT an easter egg.</item>
+		<item>I said no!</item>
+		<item>I\'m gonna go mad, seriously.</item>
+		<item>Okay, you win.</item>
+	</string-array>
 
 </resources>

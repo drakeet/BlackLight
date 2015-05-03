@@ -15,14 +15,19 @@ android {
         applicationId "us.shandian.blacklight"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 35
-        versionName "2.0.0_beta2"
+        versionCode 37
+        versionName "2.0.0"
     }
     buildTypes {
+		debug	{
+			minifyEnabled false
+			shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+		}
         release {
-            minifyEnabled false // the default value is false though.
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+			minifyEnabled false
+			shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     lintOptions {

@@ -25,6 +25,7 @@
 	<string name="custom">自定义</string>
 	<string name="custom_des">App ID / Secret 被用于获取微博登录授权。如果其权限不足，本软件将无法正确运行。</string>
 	<string name="app_copy">复制</string>
+	<string name="app_hint">啥？？？</string>
 	
 	<!-- Login -->
 	<string name="login">登录</string>
@@ -186,7 +187,7 @@
 	<string name="good_sum">亲，去Play商店给个好评呗</string>
 	<string name="network">网络</string>
 	<string name="auto_nopic">智能无图</string>
-	<string name="auto_nopic_sum">流量环境下不显示图片，WIFI环境下显示图片</string>
+	<string name="auto_nopic_sum">流量环境下不显示图片，WiFi环境下显示图片</string>
 	<string name="keyword">关键字过滤</string>
 	<string name="keyword_sum">多个关键词请用\", \"(一个英文逗号和一个空格)隔开。正则表达式须用\"`\"包裹。</string>
 	<string-array name="interval_name">
@@ -240,4 +241,12 @@
 	<string name="post_photo">分享图片</string>
 	<string name="wait_switch">别着急，BlackLight正在重新加载，马上就回来哦 ^_^</string>
 
+	<string-array name="click_refusal">
+		<item>嘿，你好啊</item>
+		<item>不，我们并没有做彩蛋</item>
+		<item>都说了没有你还点？</item>
+		<item>再点要坏了！</item>
+		<item>好吧好吧你赢了。</item>
+	</string-array>
+	
 </resources>

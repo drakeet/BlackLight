@@ -61,6 +61,10 @@ public class SettingsFragment extends PreferenceFragment implements
 	private static final String DONATION = "donation";
 
 	private Settings mSettings;
+	
+	// Life needs joy!
+	private int mClickCount = 0;
+	private String[] mRefusals;
 
 	// About
 	private Preference mPrefLicense;
@@ -103,7 +107,7 @@ public class SettingsFragment extends PreferenceFragment implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings);
-
+		mRefusals = getResources().getStringArray(R.array.click_refusal);
 		mSettings = Settings.getInstance(getActivity());
 
 		// Init
@@ -184,6 +188,7 @@ public class SettingsFragment extends PreferenceFragment implements
 		mPrefLang.setOnPreferenceClickListener(this);
 		mPrefDonation.setOnPreferenceClickListener(this);
 		mPrefKeyword.setOnPreferenceChangeListener(this);
+		mPrefVersion.setOnPreferenceClickListener(this);
 	}
 
 	@Override
@@ -260,6 +265,8 @@ public class SettingsFragment extends PreferenceFragment implements
 			i.setClass(getActivity(), DonationActivity.class);
 			startActivity(i);
 			return true;
+		} else if (preference == mPrefVersion) {
+			boom();
 		}
 
 		return false;
@@ -317,6 +324,7 @@ public class SettingsFragment extends PreferenceFragment implements
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							mSettings.putInt(Settings.LANGUAGE, which);
+							dialog.dismiss();
 							getActivity().recreate();
 						}
 					}
@@ -348,6 +356,30 @@ public class SettingsFragment extends PreferenceFragment implements
 					})
 			.show();
 		
+	}
+	
+	private Runnable clearClickCount = new Runnable() {
+		@Override
+		public void run() {
+			mClickCount = 0;
+		}
+	};
+	private void boom() {
+		getActivity().getWindow().getDecorView().removeCallbacks(clearClickCount);
+		if (mClickCount == 5) {
+			Toast.makeText(getActivity(), R.string.enough, Toast.LENGTH_SHORT).show();
+			getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					throw new RuntimeException("Your Fault");
+				}
+			}, 3000);
+		} else {
+			Toast.makeText(getActivity(), mRefusals[mClickCount], Toast.LENGTH_SHORT).show();
+			getActivity().getWindow().getDecorView().postDelayed(clearClickCount, 3000);
+		}
+		
+		mClickCount++;
 	}
 	
 }

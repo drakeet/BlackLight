@@ -60,6 +60,7 @@ import info.papdt.blacklight.support.Settings;
 import info.papdt.blacklight.support.SpannableStringUtils;
 import info.papdt.blacklight.support.StatusTimeUtils;
 import info.papdt.blacklight.support.Utility;
+import info.papdt.blacklight.support.Binded;
 import info.papdt.blacklight.ui.comments.CommentOnActivity;
 import info.papdt.blacklight.ui.comments.ReplyToActivity;
 import info.papdt.blacklight.ui.common.ImageActivity;
@@ -762,10 +763,12 @@ public class WeiboAdapter extends HeaderViewAdapter<WeiboAdapter.ViewHolder> {
 			adapter.starWeibo(this);
 		}
 
+		@Binded
 		void popup() {
 			adapter.buildPopup(this);
 		}
 
+		@Binded
 		void showUser() {
 			Intent i = new Intent();
 			i.setAction(Intent.ACTION_MAIN);
@@ -774,6 +777,7 @@ public class WeiboAdapter extends HeaderViewAdapter<WeiboAdapter.ViewHolder> {
 			context.startActivity(i);
 		}
 
+		@Binded
 		void show() {
 			if (!(msg instanceof CommentModel)){
 				if(msg.inSingleActivity){
@@ -798,6 +802,7 @@ public class WeiboAdapter extends HeaderViewAdapter<WeiboAdapter.ViewHolder> {
 			ActivityCompat.startActivity((Activity) context, i, o.toBundle());
 		}
 
+		@Binded
 		void showOrig() {
 			Intent i = new Intent();
 			i.setAction(Intent.ACTION_MAIN);
