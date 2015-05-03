@@ -43,8 +43,6 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import info.papdt.blacklight.R;
 import info.papdt.blacklight.api.attitudes.AttitudesApi;
 import info.papdt.blacklight.api.comments.NewCommentApi;
