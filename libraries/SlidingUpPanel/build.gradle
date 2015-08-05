@@ -1,17 +1,17 @@
 apply plugin: 'android-library'
 
 repositories {
-  jcenter()
+  mavenCentral()
 }
 
 dependencies {
-  compile 'com.android.support:support-v4:21.0.+'
+  compile 'com.android.support:support-v4:22.2.1'
   compile 'com.nineoldandroids:library:2.4.0'
 }
 
 android {
-  compileSdkVersion 21
-  buildToolsVersion "21.0.2"
+  compileSdkVersion 22
+  buildToolsVersion "22.0.1"
   lintOptions {
     abortOnError false
   }

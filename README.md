@@ -19,7 +19,7 @@
 
 有些改动（比如我引入第三方库）虾大不同意，所以未能 PR... 所以只作为一个自己的定制版，同时大家如果觉得不错，可以自行编译安装。。。
 
-drakeet debug 版本下载（已经使用新包名了，可以和虾大的版本同时安装同时存在）：https://github.com/drakeet/BlackLight/raw/master/app-debug.apk
+drakeet debug 版本下载（已经使用新包名了，可以和虾大的版本同时安装同时存在）：https://github.com/drakeet/BlackLight/raw/master/app-drakeet-debug.apk
 
 原开源地址：https://github.com/PaperAirplane-Dev-Team/BlackLight 
 

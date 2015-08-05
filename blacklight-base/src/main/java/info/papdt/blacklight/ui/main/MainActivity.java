@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2015 Peter Cai
  *
  * This file is part of BlackLight
@@ -19,7 +19,6 @@
 
 package info.papdt.blacklight.ui.main;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -34,13 +33,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -49,8 +49,6 @@ import android.widget.Toast;
 
 import com.quinny898.library.persistentsearch.SearchBox;
 import com.quinny898.library.persistentsearch.SearchResult;
-
-import org.litepal.tablemanager.Connector;
 
 import java.util.List;
 import java.util.Random;
@@ -63,11 +61,11 @@ import info.papdt.blacklight.cache.user.UserApiCache;
 import info.papdt.blacklight.model.GroupListModel;
 import info.papdt.blacklight.model.UserModel;
 import info.papdt.blacklight.support.AsyncTask;
+import info.papdt.blacklight.support.Binded;
 import info.papdt.blacklight.support.Settings;
 import info.papdt.blacklight.support.Utility;
-import info.papdt.blacklight.support.Binded;
-import info.papdt.blacklight.ui.comments.CommentTimeLineFragment;
 import info.papdt.blacklight.ui.comments.CommentMentionsTimeLineFragment;
+import info.papdt.blacklight.ui.comments.CommentTimeLineFragment;
 import info.papdt.blacklight.ui.common.FloatingActionButton;
 import info.papdt.blacklight.ui.common.SlidingTabLayout;
 import info.papdt.blacklight.ui.common.SlidingTabStrip;
@@ -82,9 +80,12 @@ import info.papdt.blacklight.ui.statuses.MentionsTimeLineFragment;
 import info.papdt.blacklight.ui.statuses.NewPostActivity;
 import info.papdt.blacklight.ui.statuses.UserTimeLineActivity;
 
+import static info.papdt.blacklight.BuildConfig.DEBUG;
+
 /* Main Container Activity */
 public class MainActivity extends ToolbarActivity implements View.OnClickListener, View.OnLongClickListener
 {
+	private static final String TAG = MainActivity.class.getSimpleName();
 
 	public static interface Refresher {
 		void doRefresh();
@@ -110,7 +111,6 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 	private ActionBarDrawerToggle mToggle;
 	private SearchBox mSearchBox;
 	private SearchHistoryCache mSearchHistory;
-	private View mDim;
 
 	// Drawer content
 	private View mDrawerWrapper;
@@ -128,10 +128,10 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 	private Fragment[] mFragments = new Fragment[]{
 		new HomeTimeLineFragment(),
 		new CommentTimeLineFragment(),
-        new FavListFragment(),
 		new MentionsTimeLineFragment(),
 		new CommentMentionsTimeLineFragment(),
-		new DirectMessageUserFragment()
+		new DirectMessageUserFragment(),
+		new FavListFragment()
 	};
 	private GroupFragment mGroupFragment = new GroupFragment();
 	private MultiUserFragment mMultiUserFragment = new MultiUserFragment();
@@ -174,8 +174,6 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 
 		super.onCreate(savedInstanceState);
 
-		Connector.getDatabase();//Initialize litepay db
-
 		// Initialize views
 		mDrawer = Utility.findViewById(this, R.id.drawer);
 		mDrawerWrapper = Utility.findViewById(this, R.id.drawer_wrapper);
@@ -194,28 +192,25 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 		mAccountSwitch = Utility.findViewById(this, R.id.account_switch);
 		mAccountSwitchIcon = Utility.findViewById(this, R.id.account_switch_icon);
 		mSearchBox = Utility.findViewById(this, R.id.main_search);
-		mDim = Utility.findViewById(this, R.id.main_dim);
 
 		final String[] pages = getResources().getStringArray(R.array.main_tabs);
-		mPager.setAdapter(
-				new FragmentStatePagerAdapter(getFragmentManager()) {
-					@Override
-					public int getCount() {
-						return pages.length;
-					}
+		mPager.setAdapter(new FragmentStatePagerAdapter(getFragmentManager()) {
+			@Override
+			public int getCount() {
+				return pages.length;
+			}
 
-					@Override
-					public Fragment getItem(int position) {
+			@Override
+			public Fragment getItem(int position) {
 
-						return mFragments[position];
-					}
+				return mFragments[position];
+			}
 
-					@Override
-					public CharSequence getPageTitle(int position) {
-						return pages[position];
-					}
-				}
-		);
+			@Override
+			public CharSequence getPageTitle(int position) {
+				return pages[position];
+			}
+		});
 		mPager.setOffscreenPageLimit(pages.length);
 		mTabs.setViewPager(mPager);
 
@@ -225,22 +220,6 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 		mSearchBox.setSearchListener(new SearchBox.SearchListener() {
 			@Override
 			public void onSearchOpened() {
-				mDim.setVisibility(View.VISIBLE);
-
-				// Animate
-				mDim.clearAnimation();
-				AlphaAnimation anim = new AlphaAnimation(0f, 0.5f);
-				anim.setDuration(200);
-				anim.setFillAfter(true);
-				mDim.startAnimation(anim);
-
-				mDim.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						mDim.clearAnimation();
-						mDim.setAlpha(0.5f);
-					}
-				}, 200);
 			}
 
 			@Override
@@ -251,21 +230,6 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 			@Override
 			public void onSearchClosed() {
 				mSearchBox.hideCircularly(MainActivity.this);
-
-				// Animate
-				mDim.clearAnimation();
-				AlphaAnimation anim = new AlphaAnimation(0.5f, 0f);
-				anim.setDuration(500);
-				anim.setFillAfter(true);
-				mDim.startAnimation(anim);
-
-				mDim.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						mDim.clearAnimation();
-						mDim.setVisibility(View.GONE);
-					}
-				}, 500);
 			}
 
 			@Override
@@ -288,10 +252,10 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 		final Drawable[] pageIcons = new Drawable[] {
 			getResources().getDrawable(R.drawable.ic_drawer_home),
 			getResources().getDrawable(R.drawable.ic_drawer_comment),
-			getResources().getDrawable(R.drawable.ic_drawer_fav),
 			getResources().getDrawable(R.drawable.ic_drawer_at),
 			getResources().getDrawable(R.drawable.ic_drawer_at),
-			getResources().getDrawable(R.drawable.ic_drawer_pm)
+			getResources().getDrawable(R.drawable.ic_drawer_pm),
+			getResources().getDrawable(R.drawable.ic_drawer_fav)
 		};
 
 		mToolbarTabs.setIconAdapter(new SlidingTabLayout.TabIconAdapter() {
@@ -366,6 +330,14 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 
 		mDrawerGravity = rightHanded ? Gravity.RIGHT : Gravity.LEFT;
 
+		//set GroupFragmentCallBack
+		GroupFragment.setGfCallBack(new GroupFragment.GFCallBack() {
+			@Override
+			public void onItemClick() {
+				openOrCloseDrawer();
+			}
+		});
+
 		// Set gravity
 		View nav = findViewById(R.id.nav);
 		DrawerLayout.LayoutParams p = (DrawerLayout.LayoutParams) nav.getLayoutParams();
@@ -405,18 +377,16 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 		}
 
 		// My account
-		mLoginCache = new LoginApiCache(this);
-		mUserCache = new UserApiCache(this);
-		new InitializerTask().execute();
+		initUserAccount();
 		//new GroupsTask().execute();
 
 		// Initialize FAB
 		mFAB = new FloatingActionButton.Builder(this)
 			.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-			.withPaddings(16, 16, 16, 16)
+			.withPaddings(0, 0, 16, 16)
 			.withDrawable(Utility.getFABNewIcon(this))
 			.withButtonColor(Utility.getFABBackground(this))
-			.withButtonSize(100)
+			.withButtonSize(56 + 16)
 			.create();
 		mFAB.setOnClickListener(this);
 		mFAB.setOnLongClickListener(this);
@@ -442,10 +412,10 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 			.commit();
 
 		updateSplashes();
-		
+
 		// Ignore first spinner event
 		mIgnore = true;
-		
+
 		mToolbar.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -459,14 +429,40 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 			public void onGlobalLayout() {
 
 				mHeaderHeight = mTabs.getHeight() + 10;
-				mWrapperHeight = mTabsWrapper.getMeasuredHeight();
+				mWrapperHeight = mTabsWrapper.getHeight();
+
+				if (DEBUG) {
+					Log.d(TAG, "Global layout. Wrapper height: " + mWrapperHeight);
+				}
 
 				mToolbarTabs.setOnPageChangeListener(pageListener);
 				mToolbarTabs.setTabIconSize((int) (mToolbar.getHeight() * 0.88f));
 
-				mDrawerWrapper.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				if (mWrapperHeight > 0)
+					mDrawerWrapper.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 			}
 		});
+
+		MultiUserFragment.setMuCallBack(new MultiUserFragment.MuCallBack() {
+			@Override
+			public void syncAccount() {
+				initUserAccount();
+				((HomeTimeLineFragment) mFragments[0]).doRefresh();
+				drawerSwitch();
+				mMultiUserFragment.reload();
+			}
+
+			@Override
+			public void closeDrawer() {
+				openOrCloseDrawer();
+			}
+		});
+	}
+
+	private void initUserAccount() {
+		mLoginCache = new LoginApiCache(this);
+		mUserCache = new UserApiCache(this);
+		new InitializerTask().execute();
 	}
 
 	@Override
@@ -569,6 +565,9 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 	}
 
 	public void updateHeaderTranslation(float factor) {
+
+		if (mWrapperHeight == 0) return; // DO NOT allow call to this if the height is not measured yet.
+
 		mTopWrapper.setAlpha(factor);
 		mToolbar.setAlpha(1 - factor);
 		mTabs.setAlpha(1 - factor);
@@ -584,6 +583,12 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 
 		if (params.height < 0)
 			params.height = 0;
+
+		if (DEBUG) {
+			Log.d(TAG, "Wrapper height: " + mWrapperHeight);
+			Log.d(TAG, "Header factor: " + factor);
+			Log.d(TAG, "Header height: " + params.height);
+		}
 
 		mTabsWrapper.setLayoutParams(params);
 
@@ -619,6 +624,7 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 
 	@Binded
 	public void showMe() {
+		openOrCloseDrawer();
 		if (mUser != null) {
 			Intent i = new Intent();
 			i.setAction(Intent.ACTION_MAIN);
@@ -649,22 +655,18 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 			new AlertDialog.Builder(this)
 				.setMessage(R.string.confirm_delete)
 				.setCancelable(true)
-				.setNegativeButton(
-						android.R.string.cancel, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								dialog.dismiss();
-							}
-						}
-				)
-				.setPositiveButton(
-						android.R.string.ok, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								new GroupDeleteTask().execute();
-							}
-						}
-				)
+				.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				})
+				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						new GroupDeleteTask().execute();
+					}
+				})
 				.show();
 			return true;
 		} else if (item.getItemId() == R.id.group_create) {
@@ -672,22 +674,18 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 			new AlertDialog.Builder(this)
 				.setTitle(R.string.group_create)
 				.setCancelable(true)
-				.setNegativeButton(
-						android.R.string.cancel, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								dialog.dismiss();
-							}
-						}
-				)
-				.setPositiveButton(
-						android.R.string.ok, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								new GroupCreateTask().execute(text.getText().toString().trim());
-							}
-						}
-				)
+				.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				})
+				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						new GroupCreateTask().execute(text.getText().toString().trim());
+					}
+				})
 				.setView(text)
 				.show();
 			return true;
@@ -707,8 +705,8 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 
 	@Override
 	public void onBackPressed() {
-        if(mDrawer.isDrawerOpen(mDrawerGravity)){
-            mDrawer.closeDrawer(mDrawerGravity);
+		if(mDrawer.isDrawerOpen(mDrawerGravity)){
+			mDrawer.closeDrawer(mDrawerGravity);
 		} else {
 			super.onBackPressed();
 		}
@@ -724,6 +722,7 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 		i.setAction(Intent.ACTION_MAIN);
 		i.setClass(this, SettingsActivity.class);
 		startActivity(i);
+		openOrCloseDrawer();
 	}
 
 	@Binded
@@ -744,7 +743,7 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 
 		mDrawerState = !mDrawerState;
 	}
-	
+
 	@Binded
 	public void muser() {
 		Intent i = new Intent();

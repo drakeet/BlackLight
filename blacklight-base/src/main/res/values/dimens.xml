@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="account_height">148dp</dimen>
+    <dimen name="navigation_drawer_width">300dp</dimen>
     <dimen name="icon_space">6dp</dimen>
+    <dimen name="weibo_content_statue_margin_top">6dp</dimen>
 </resources>

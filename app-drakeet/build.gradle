@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "me.drakeet.blacklight"
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 1
         versionName "drakeet"
     }

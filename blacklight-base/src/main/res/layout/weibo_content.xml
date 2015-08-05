@@ -186,6 +186,7 @@
     <LinearLayout
         android:gravity="right"
         android:layout_marginRight="12dp"
+        android:layout_marginTop="@dimen/weibo_content_statue_margin_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

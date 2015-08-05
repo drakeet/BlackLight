@@ -20,15 +20,10 @@
 <resources>
 	<!-- Funny Things -->
 	<string-array name="title_splashes">
-		<item>黑灯</item>
-		<item>瞎火</item>
-		<item>黑光</item>
-		<item>紫外</item>
-		<item>BlackLight</item>
-		<item>BL</item>
-		<item>黑魔法</item>
+		<item>BlackLight.drakeet</item>
 		<item>失去人性，失去很多</item>
 		<item>失去兽性，失去一切</item>
+		<item>好久不见</item>
 	</string-array>
 	
 	<string-array name="splashes">

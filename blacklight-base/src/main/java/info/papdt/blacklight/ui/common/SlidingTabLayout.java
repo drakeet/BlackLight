@@ -22,7 +22,6 @@ package info.papdt.blacklight.ui.common;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -196,7 +195,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
 	private void populateTabStrip() {
 		final PagerAdapter adapter = mViewPager.getAdapter();
-		final View.OnClickListener tabClickListener = new TabClickListener();
+		final OnClickListener tabClickListener = new TabClickListener();
 
 		for (int i = 0; i < adapter.getCount(); i++) {
 			View tabView = null;
@@ -330,7 +329,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 		}
 	}
 
-	private class TabClickListener implements View.OnClickListener {
+	private class TabClickListener implements OnClickListener {
 		@Override
 		public void onClick(View v) {
 			for (int i = 0; i < mTabStrip.getChildCount(); i++) {

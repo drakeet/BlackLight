@@ -70,6 +70,16 @@ public class MultiUserFragment extends Fragment implements AdapterView.OnItemCli
 	public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
 		new SwitchTask().execute(pos);
 	}
+
+	interface MuCallBack{
+		void syncAccount();
+		void closeDrawer();
+	}
+
+	static MuCallBack mMuCallBack;
+	static void setMuCallBack(MuCallBack muCallBack){
+		mMuCallBack = muCallBack;
+	}
 	
 	public void reload() {
 		mCache.reloadMultiUser();
