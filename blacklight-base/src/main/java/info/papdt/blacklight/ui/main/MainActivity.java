@@ -87,22 +87,22 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 {
 	private static final String TAG = MainActivity.class.getSimpleName();
 
-	public static interface Refresher {
+	public interface Refresher {
 		void doRefresh();
 		void goToTop();
 	}
 
-	public static interface HeaderProvider {
+	public interface HeaderProvider {
 		float getHeaderFactor();
 	}
 
 	public static final int REQUEST_LOGIN = 2333;
 	public static final int HOME = 0,
-							COMMENT = 1,
-							MENTION = 2,
-							MENTION_CMT = 3,
-							DM = 4,
-							FAV = 5;
+							FAV = 1,
+							COMMENT = 2,
+							MENTION = 3,
+							MENTION_CMT = 4,
+							DM = 5;
 
 	private static final String BILATERAL = "bilateral";
 
@@ -251,11 +251,11 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 		mTopWrapper.setAlpha(0f);
 		final Drawable[] pageIcons = new Drawable[] {
 			getResources().getDrawable(R.drawable.ic_drawer_home),
-			getResources().getDrawable(R.drawable.ic_drawer_comment),
+			getResources().getDrawable(R.drawable.ic_drawer_fav),
+            getResources().getDrawable(R.drawable.ic_drawer_comment),
 			getResources().getDrawable(R.drawable.ic_drawer_at),
 			getResources().getDrawable(R.drawable.ic_drawer_at),
-			getResources().getDrawable(R.drawable.ic_drawer_pm),
-			getResources().getDrawable(R.drawable.ic_drawer_fav)
+			getResources().getDrawable(R.drawable.ic_drawer_pm)
 		};
 
 		mToolbarTabs.setIconAdapter(new SlidingTabLayout.TabIconAdapter() {
@@ -382,8 +382,7 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 
 		// Initialize FAB
 		mFAB = new FloatingActionButton.Builder(this)
-			.withGravity(Gravity.BOTTOM | Gravity.RIGHT)
-			.withPaddings(0, 0, 16, 16)
+			.withGravity(Gravity.BOTTOM | Gravity.RIGHT).withPaddings(0, 0, 16, 16)
 			.withDrawable(Utility.getFABNewIcon(this))
 			.withButtonColor(Utility.getFABBackground(this))
 			.withButtonSize(56 + 16)
@@ -404,9 +403,9 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
 
 		// Drawer Groups
-		getFragmentManager().beginTransaction()
-			.add(R.id.drawer_group, mGroupFragment)
-			.add(R.id.drawer_group, mMultiUserFragment)
+        getFragmentManager().beginTransaction()
+                            .add(R.id.drawer_group, mGroupFragment)
+                            .add(R.id.drawer_group, mMultiUserFragment)
 			.show(mGroupFragment)
 			.hide(mMultiUserFragment)
 			.commit();
@@ -436,7 +435,7 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 				}
 
 				mToolbarTabs.setOnPageChangeListener(pageListener);
-				mToolbarTabs.setTabIconSize((int) (mToolbar.getHeight() * 0.88f));
+				mToolbarTabs.setTabIconSize(mToolbar.getHeight());
 
 				if (mWrapperHeight > 0)
 					mDrawerWrapper.getViewTreeObserver().removeGlobalOnLayoutListener(this);
@@ -652,38 +651,48 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 
 			return true;
 		} else if (item.getItemId() == R.id.group_destroy) {
-			new AlertDialog.Builder(this)
-				.setMessage(R.string.confirm_delete)
-				.setCancelable(true)
-				.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				})
-				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						new GroupDeleteTask().execute();
+            new AlertDialog.Builder(this).setMessage(R.string.confirm_delete)
+                                         .setCancelable(true)
+                                         .setNegativeButton(
+                                                 android.R.string.cancel,
+                                                 new DialogInterface.OnClickListener() {
+                                                     @Override
+                                                     public void onClick(DialogInterface dialog, int which) {
+                                                         dialog.dismiss();
+                                                     }
+                                                 }
+                                         )
+                                         .setPositiveButton(
+                                                 android.R.string.ok,
+                                                 new DialogInterface.OnClickListener() {
+                                                     @Override
+                                                     public void onClick(DialogInterface dialog,
+                                                                         int which) {
+                                                         new GroupDeleteTask().execute();
 					}
 				})
 				.show();
 			return true;
 		} else if (item.getItemId() == R.id.group_create) {
 			final EditText text = new EditText(this);
-			new AlertDialog.Builder(this)
-				.setTitle(R.string.group_create)
-				.setCancelable(true)
-				.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				})
-				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						new GroupCreateTask().execute(text.getText().toString().trim());
+            new AlertDialog.Builder(this).setTitle(R.string.group_create)
+                                         .setCancelable(true)
+                                         .setNegativeButton(
+                                                 android.R.string.cancel,
+                                                 new DialogInterface.OnClickListener() {
+                                                     @Override
+                                                     public void onClick(DialogInterface dialog, int which) {
+                                                         dialog.dismiss();
+                                                     }
+                                                 }
+                                         )
+                                         .setPositiveButton(
+                                                 android.R.string.ok,
+                                                 new DialogInterface.OnClickListener() {
+                                                     @Override
+                                                     public void onClick(DialogInterface dialog,
+                                                                         int which) {
+                                                         new GroupCreateTask().execute(text.getText().toString().trim());
 					}
 				})
 				.setView(text)
@@ -732,13 +741,16 @@ public class MainActivity extends ToolbarActivity implements View.OnClickListene
 		if (!mDrawerState) {
 			mSetting.setVisibility(View.GONE);
 			mMultiUser.setVisibility(View.VISIBLE);
-			getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-				.hide(mGroupFragment).show(mMultiUserFragment).commit();
+			getFragmentManager().beginTransaction()
+                                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                                .hide(mGroupFragment).show(mMultiUserFragment).commit();
 		} else {
 			mSetting.setVisibility(View.VISIBLE);
 			mMultiUser.setVisibility(View.GONE);
-			getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-				.hide(mMultiUserFragment).show(mGroupFragment).commit();
+			getFragmentManager().beginTransaction()
+                                .setCustomAnimations(android.R.animator.fade_in,
+                                                     android.R.animator.fade_out)
+                                .hide(mMultiUserFragment).show(mGroupFragment).commit();
 		}
 
 		mDrawerState = !mDrawerState;
